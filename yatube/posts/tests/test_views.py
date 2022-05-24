@@ -65,11 +65,6 @@ class PostPagesTests(TestCase):
             group=cls.group,
             image=cls.uploaded
         )
-        cls.post_4_for_delete = Post.objects.create(
-            text='Тестовый текст для удаляемого поста',
-            group=cls.group,
-            author=cls.user,
-        )
 
     @classmethod
     def tearDownClass(cls):
@@ -118,7 +113,7 @@ class PostPagesTests(TestCase):
     # Задание 2. Проверяем контекст на соответвие ожиданиям
     def check_context_page_obj(self, response):
         """Пост соответствует ожиданиям"""
-        response_post = response.context.get('page_obj')[1]
+        response_post = response.context.get('page_obj')[0]
         post_text = response_post.text
         post_author = response_post.author
         post_group = response_post.group
@@ -223,9 +218,9 @@ class PostPagesTests(TestCase):
         """Проверяем что пост с группой попадает на страницы."""
         cache.clear()
         group_post_pages = {
-            reverse('posts:index'): 4,
-            reverse('posts:group_list', kwargs={'slug': 'test-slug'}): 3,
-            reverse('posts:profile', kwargs={'username': 'auth'}): 4,
+            reverse('posts:index'): 3,
+            reverse('posts:group_list', kwargs={'slug': 'test-slug'}): 2,
+            reverse('posts:profile', kwargs={'username': 'auth'}): 3,
         }
         for value, expected in group_post_pages.items():
             with self.subTest(value=value):
@@ -241,19 +236,19 @@ class PostPagesTests(TestCase):
     # Спринт 6: проверка кэша
     def test_cache_in_index_page_show_correct_context(self):
         """Проверка работы кэша на главной странице."""
+        post_for_delete = Post.objects.create(
+            text='Тестовый текст для удаляемого поста',
+            author=self.user,
+        )
         response = self.guest_client.get(reverse('posts:index'))
         posts_count = len(response.context.get('page_obj'))
-        self.post_4_for_delete.delete()
+        post_for_delete.delete()
         posts_count_2_delete = len(response.context.get('page_obj'))
         cache.clear()
         response = self.guest_client.get(reverse('posts:index'))
         posts_count_3_cache = len(response.context.get('page_obj'))
         self.assertEqual(posts_count - posts_count_2_delete, 0)
         self.assertEqual(posts_count - posts_count_3_cache, 1)
-        Post.objects.create(
-            text='Тестовый текст для удаляемого поста',
-            author=self.user,
-        )
 
 
 class PaginatorViewsTest(TestCase):
