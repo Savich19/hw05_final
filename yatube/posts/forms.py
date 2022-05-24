@@ -17,6 +17,7 @@ class PostForm(forms.ModelForm):
             'group': "Группа, к которой будет относиться пост",
         }
 
+
 class CommentForm(forms.ModelForm):
     class Meta:
         # укажем модель, с которой связана создаваемая форма

@@ -1,9 +1,9 @@
-from multiprocessing import AuthenticationError
 from django.db import models
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 LEN_POST_TEXT = 15
+
 
 class Group(models.Model):
     title = models.CharField(max_length=200)
@@ -40,14 +40,15 @@ class Post(models.Model):
         verbose_name='Группа',
         help_text='Выберите группу'
     )
-    # Поле для картинки (необязательное) 
+    # Поле для картинки (необязательное)
     image = models.ImageField(
         'Картинка',
         upload_to='posts/',
         blank=True
-    )  
-    # Аргумент upload_to указывает директорию, 
-    # в которую будут загружаться пользовательские файлы. 
+    )
+    # Аргумент upload_to указывает директорию,
+    # в которую будут загружаться пользовательские файлы.
+
     class Meta:
         ordering = ['-pub_date']
         # добавлено недавно
@@ -77,9 +78,10 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ['-created']
- 
+
     def __str__(self):
         return self.text[:LEN_POST_TEXT]
+
 
 class Follow(models.Model):
     user = models.ForeignKey(
@@ -98,7 +100,7 @@ class Follow(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['author','user'],
+                fields=['author', 'user'],
                 name='unique follow'
             ),
             models.CheckConstraint(

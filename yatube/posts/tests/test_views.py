@@ -237,13 +237,12 @@ class PostPagesTests(TestCase):
         url = reverse('posts:group_list', args=['test-slug-2'])
         response = self.authorized_client.get(url)
         self.assertEqual(len(response.context["page_obj"]), 0)
-    
+
     # Спринт 6: проверка кэша
     def test_cache_in_index_page_show_correct_context(self):
         """Проверка работы кэша на главной странице."""
         response = self.guest_client.get(reverse('posts:index'))
         posts_count = len(response.context.get('page_obj'))
-        #Post.objects.filter(id=self.post_3_img.id).delete()
         self.post_4_for_delete.delete()
         posts_count_2_delete = len(response.context.get('page_obj'))
         cache.clear()

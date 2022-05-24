@@ -17,7 +17,11 @@ urlpatterns = [
     # Редактирование поста
     path('posts/<int:post_id>/edit/', views.post_edit, name='post_edit'),
     # Комментирование поста
-    path('posts/<int:post_id>/comment/', views.add_comment, name='add_comment'),
+    path(
+        'posts/<int:post_id>/comment/',
+        views.add_comment,
+        name='add_comment'
+    ),
     # Просмотр постов авторов, на которых подписан пользователь
     path('follow/', views.follow_index, name='follow_index'),
     # Подписаться

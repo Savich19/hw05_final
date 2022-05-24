@@ -1,8 +1,6 @@
-# from functools import cache
-from enum import auto
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Comment, Follow, Group, Post, User
+from .models import Follow, Group, Post, User
 from .forms import PostForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_page
@@ -140,13 +138,9 @@ def add_comment(request, post_id):
 
 @login_required
 def follow_index(request):
-    # информация о текущем пользователе доступна в переменной request.user
-    # ...
     template = 'posts/follow.html'
-    #post_list = Post.objects.select_related()
-    post_list=Post.objects.filter(author__following__user=request.user)
+    post_list = Post.objects.filter(author__following__user=request.user)
     page_obj = create_pages(request, post_list, CNT_POSTS)
-
     context = {
         'page_obj': page_obj,
     }
@@ -176,18 +170,3 @@ def profile_unfollow(request, username):
     if Follow.objects.filter(id=follow_profile.id).exists():
         follow_profile.delete()
     return redirect('posts:profile', username=username)
-'''NEW
-
-
-@login_required
-def profile_follow(request, username):
-    """View функция для подписки на автора."""
-    follow_author = get_object_or_404(User, username=username)
-    follow_user = get_object_or_404(User, username=request.user)
-    # if follow_user != follow_author:
-    Follow.objects.get_or_create(
-        author=follow_author,
-        user=follow_user,
-    )
-    return redirect('posts:follow_index')
-'''
