@@ -2,10 +2,12 @@
 {% block title %}
     Последние обновления на сайте
 {% endblock %}
+{% load cache %}
 {% block content %}
 {% load thumbnail %}
 {% include 'posts/includes/switcher.html' %}
 <div class="container py-5">
+  {% cache 20 index_page page_obj %}
   {% for post in page_obj %}
   <article>
     <ul>
@@ -29,5 +31,6 @@
   {% if not forloop.last %}<hr>{% endif %}
   {% endfor %}
   {% include 'posts/includes/paginator.html' %}
+  {% endcache %}
 </div>
 {% endblock %}
