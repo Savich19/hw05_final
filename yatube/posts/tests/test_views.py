@@ -242,12 +242,12 @@ class PostPagesTests(TestCase):
         )
         len_posts = Post.objects.count()
         response = self.authorized_client.get(reverse('posts:index'))
-        self.assertEqual(len(response.context.get('page_obj')), len_posts)
+        self.assertEqual(len(response.context["page_obj"]), len_posts)
         Post.objects.last().delete()
-        self.assertEqual(len(response.context.get('page_obj')), len_posts)
+        self.assertEqual(len(response.context["page_obj"]), len_posts)
         cache.clear()
         response = self.authorized_client.get(reverse('posts:index'))
-        self.assertEqual(len(response.context.get('page_obj')), len_posts - 1)
+        self.assertEqual(len(response.context["page_obj"]), len_posts - 1)
 
 
 class PaginatorViewsTest(TestCase):
