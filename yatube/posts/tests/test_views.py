@@ -240,13 +240,13 @@ class PostPagesTests(TestCase):
             text='Тестовый текст для удаляемого поста',
             author=self.user,
         )
-        len_posts = len(Post.objects.all())
-        response = self.guest_client.get(reverse('posts:index'))
+        len_posts = Post.objects.count()
+        response = self.authorized_client.get(reverse('posts:index'))
         self.assertEqual(len(response.context.get('page_obj')), len_posts)
         Post.objects.last().delete()
         self.assertEqual(len(response.context.get('page_obj')), len_posts)
         cache.clear()
-        response = self.guest_client.get(reverse('posts:index'))
+        response = self.authorized_client.get(reverse('posts:index'))
         self.assertEqual(len(response.context.get('page_obj')), len_posts - 1)
 
 
