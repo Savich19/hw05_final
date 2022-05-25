@@ -236,19 +236,18 @@ class PostPagesTests(TestCase):
     # Спринт 6: проверка кэша
     def test_cache_in_index_page_show_correct_context(self):
         """Проверка работы кэша на главной странице."""
-        post_for_delete = Post.objects.create(
+        Post.objects.create(
             text='Тестовый текст для удаляемого поста',
             author=self.user,
         )
+        len_posts = len(Post.objects.all())
         response = self.guest_client.get(reverse('posts:index'))
-        posts_count = len(response.context.get('page_obj'))
-        post_for_delete.delete()
-        posts_count_2_delete = len(response.context.get('page_obj'))
+        self.assertEqual(len(response.context.get('page_obj')), len_posts)
+        Post.objects.last().delete()
+        self.assertEqual(len(response.context.get('page_obj')), len_posts)
         cache.clear()
         response = self.guest_client.get(reverse('posts:index'))
-        posts_count_3_cache = len(response.context.get('page_obj'))
-        self.assertEqual(posts_count - posts_count_2_delete, 0)
-        self.assertEqual(posts_count - posts_count_3_cache, 1)
+        self.assertEqual(len(response.context.get('page_obj')), len_posts - 1)
 
 
 class PaginatorViewsTest(TestCase):
