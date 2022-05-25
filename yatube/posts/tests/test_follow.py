@@ -1,6 +1,5 @@
-from urllib import response
 from django.test import Client, TestCase
-from posts.models import Comment, Follow, Group, Post
+from posts.models import Follow, Group, Post
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
