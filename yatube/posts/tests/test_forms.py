@@ -2,12 +2,12 @@ import shutil
 import tempfile
 
 from django.conf import settings
-from posts.forms import PostForm
-from posts.models import Comment, Group, Post
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
+from posts.forms import PostForm
+from posts.models import Comment, Group, Post
 
 User = get_user_model()
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)

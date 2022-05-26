@@ -1,7 +1,7 @@
-from django.test import Client, TestCase
-from posts.models import Follow, Group, Post
 from django.contrib.auth import get_user_model
+from django.test import Client, TestCase
 from django.urls import reverse
+from posts.models import Follow, Group, Post
 
 User = get_user_model()
 
@@ -10,9 +10,9 @@ class FollowTest(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        cls.user = User.objects.create_user(username='auth')
-        cls.user_2 = User.objects.create_user(username='auth_2')
-        cls.user_3 = User.objects.create_user(username='auth_3')
+        cls.user = User.objects.create_user(username='follower')
+        cls.user_2 = User.objects.create_user(username='author')
+        cls.user_3 = User.objects.create_user(username='unfollower')
         cls.group = Group.objects.create(
             title='Тестовый текст',
             description='Тестовое описание',
@@ -32,6 +32,8 @@ class FollowTest(TestCase):
     def setUp(self):
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
+        self.authorized_client_2 = Client()
+        self.authorized_client_2.force_login(self.user_3)
 
     def test_authorized_client_follow(self):
         """Авторизованный пользователь имеет возможность
@@ -58,9 +60,9 @@ class FollowTest(TestCase):
         )
         self.assertEqual(follow_cnt_3, follow_cnt_1)
 
-    def test_post_in_follow(self):
-        """Новая запись пользователя появляется в ленте тех, кто на него
-        подписан и не появляется в ленте тех, кто не подписан."""
+    def test_new_post_follow(self):
+        """Новая запись пользователя появляется в ленте тех,
+        кто на него подписан."""
         response = self.authorized_client.get(reverse('posts:follow_index'))
         post_cnt_1 = len(response.context.get('page_obj'))
         Follow.objects.get_or_create(user=self.user, author=self.user_2)
@@ -68,7 +70,9 @@ class FollowTest(TestCase):
         post_cnt_2 = len(response.context.get('page_obj'))
         self.assertEqual(post_cnt_2 - post_cnt_1, 1)
 
-        self.authorized_client.force_login(self.user_3)
-        response = self.authorized_client.get(reverse('posts:follow_index'))
-        post_cnt_3 = len(response.context.get('page_obj'))
-        self.assertEqual(post_cnt_3, 0)
+    def test_new_post_follow(self):
+        """Новая запись пользователя не появляется в ленте тех,
+        кто на него не подписан."""
+        response = self.authorized_client_2.get(reverse('posts:follow_index'))
+        post_cnt = len(response.context.get('page_obj'))
+        self.assertEqual(post_cnt, 0)

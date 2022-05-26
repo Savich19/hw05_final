@@ -1,10 +1,10 @@
 from http import HTTPStatus
-from django.urls import reverse
-from django.test import TestCase, Client
-from django.contrib.auth import get_user_model
 
-from posts.models import Group, Post, Comment
+from django.contrib.auth import get_user_model
 from django.core.cache import cache
+from django.test import Client, TestCase
+from django.urls import reverse
+from posts.models import Comment, Group, Post
 
 User = get_user_model()
 
